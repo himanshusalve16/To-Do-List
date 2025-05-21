@@ -464,3 +464,201 @@ button {
     align-self: flex-end;
   }
 }
+/* Sticky Notes Container */
+.sticky-notes-container {
+  position: fixed;
+  top: 100px;
+  right: 30px;
+  width: 280px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: linear-gradient(to bottom, var(--bg-color), #ffffff);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px var(--shadow-color);
+  padding: 20px;
+  z-index: 1000;
+  transition: var(--transition);
+  backdrop-filter: blur(8px);
+}
+
+/* Each Sticky Note */
+.sticky-note {
+  background-color: #3a5a8c; /* blue background */
+  color: #f0f4ff; /* light text for contrast */
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(58, 90, 140, 0.7);
+  font-size: 0.95rem;
+  position: relative;
+  transition: var(--transition);
+  animation: fadeIn 0.3s ease-in;
+}
+
+.sticky-note:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(58, 90, 140, 0.9);
+}
+
+/* Note Textarea */
+.sticky-note textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  resize: none;
+  font-size: 0.92rem;
+  color: inherit; /* inherits from sticky-note */
+  font-family: inherit;
+  line-height: 1.4;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.sticky-note textarea:focus {
+  outline: none;
+  background-color: rgba(240, 244, 255, 0.3);
+}
+
+/* Note Actions */
+.sticky-note-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+  gap: 6px;
+}
+
+.sticky-note button {
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background-color: #274870; /* darker blue button */
+  color: white;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.sticky-note button:hover {
+  background-color: #1d3754; /* even darker on hover */
+}
+
+/* Add Note Button */
+.add-note-btn {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #3a5a8c;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: var(--border-radius);
+  width: 100%;
+  text-align: center;
+  border: none;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.add-note-btn:hover {
+  background-color: #274870;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(39, 72, 112, 0.7);
+}
+
+/* Dark Mode Overrides */
+.dark-mode .sticky-notes-container {
+  background: linear-gradient(to bottom, #1e1e1e, #2a2a2a);
+  border-color: #555;
+  color: #ddd; /* lighter text in container */
+}
+
+.dark-mode .sticky-note {
+  background-color: #3a5a8c !important; /* same blue */
+  color: #f0f4ff !important; /* light text */
+  box-shadow: 0 4px 10px rgba(20, 20, 20, 0.8);
+}
+
+.dark-mode .sticky-note:hover {
+  box-shadow: 0 6px 12px rgba(30, 30, 30, 0.9);
+}
+
+.dark-mode .sticky-note textarea {
+  color: #f0f4ff !important;
+  background-color: transparent !important;
+}
+
+.dark-mode .sticky-note textarea:focus {
+  background-color: rgba(240, 244, 255, 0.2) !important;
+}
+
+.dark-mode .add-note-btn {
+  background-color: #3a5a8c;
+  color: white;
+}
+
+.dark-mode .add-note-btn:hover {
+  background-color: #274870;
+}
+
+.dark-mode .sticky-note button {
+  background-color: #274870;
+  color: white;
+}
+
+.dark-mode .sticky-note button:hover {
+  background-color: #1d3754;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mic Search */
+.mic-search-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.mic-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 18px;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.mic-btn.listening {
+  background-color: #dc3545; /* Red when listening */
+  animation: pulse 1.5s infinite;
+}
+
+.mic-btn:hover {
+  filter: brightness(90%);
+}
+
+.transcript {
+  margin-top: 10px;
+  font-style: italic;
+  color: var(--secondary-color);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px #dc3545;
+  }
+  50% {
+    box-shadow: 0 0 20px #dc3545;
+  }
+}
