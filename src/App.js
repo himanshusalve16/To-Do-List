@@ -4,13 +4,13 @@ import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 import ThemeToggle from './components/ThemeToggle';
 import useLocalStorage from './hooks/useLocalStorage';
+import StickyNotes from './components/StickyNotes';
+import MicSearch from './components/MicSearch';
 
 function App() {
-  // Use our custom hook for localStorage persistence
   const [todos, setTodos] = useLocalStorage('todos', []);
   const [darkMode, setDarkMode] = useLocalStorage('darkMode', false);
 
-  // Apply the theme class to the body element
   useEffect(() => {
     if (darkMode) {
       document.body.classList.add('dark-mode');
@@ -19,12 +19,10 @@ function App() {
     }
   }, [darkMode]);
 
-  // Add a new todo
   const addTodo = (todo) => {
     setTodos([todo, ...todos]);
   };
 
-  // Toggle todo completion status
   const toggleComplete = (id) => {
     setTodos(
       todos.map(todo => 
@@ -33,12 +31,10 @@ function App() {
     );
   };
 
-  // Delete a todo
   const deleteTodo = (id) => {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
-  // Update a todo
   const updateTodo = (id, updatedTodo) => {
     setTodos(
       todos.map(todo => 
@@ -47,7 +43,6 @@ function App() {
     );
   };
 
-  // Toggle dark/light mode
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -61,6 +56,10 @@ function App() {
       
       <div className="app-content">
         <TodoForm addTodo={addTodo} />
+
+        {/* Add MicSearch here */}
+        <MicSearch onAddTask={addTodo} />
+
         <TodoList 
           todos={todos} 
           toggleComplete={toggleComplete} 
@@ -72,6 +71,9 @@ function App() {
       <footer className="app-footer">
         <p>React To-Do List App © {new Date().getFullYear()}</p>
       </footer>
+
+      {/* Floating Sticky Notes Widget */}
+      <StickyNotes />
     </div>
   );
 }
