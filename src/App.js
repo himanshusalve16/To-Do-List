@@ -6,6 +6,7 @@ import ThemeToggle from './components/ThemeToggle';
 import useLocalStorage from './hooks/useLocalStorage';
 import StickyNotes from './components/StickyNotes';
 import MicSearch from './components/MicSearch';
+import XPbar from './components/XPbar';
 
 function App() {
   const [todos, setTodos] = useLocalStorage('todos', []);
@@ -47,17 +48,27 @@ function App() {
     setDarkMode(!darkMode);
   };
 
+  // Calculate XP
+  const completedCount = todos.filter(todo => todo.completed).length;
+  const currentXP = completedCount * 10;
+  const maxXP = 100;
+
   return (
     <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
       <div className="app-header">
         <h1>To-Do List</h1>
         <ThemeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       </div>
-      
+
+      {/* XP Bar */}
+      <div className="xp-bar-container">
+        <XPbar currentXP={currentXP} maxXP={maxXP} />
+      </div>
+
       <div className="app-content">
         <TodoForm addTodo={addTodo} />
 
-        {/* Add MicSearch here */}
+        {/* Mic Search Input */}
         <MicSearch onAddTask={addTodo} />
 
         <TodoList 
