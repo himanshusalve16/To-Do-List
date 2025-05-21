@@ -56,12 +56,15 @@ function App() {
   return (
     <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
       <div className="app-header">
-        <h1>To-Do List</h1>
-        <ThemeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        <div className="header-row">
+          <h1>To-Do List</h1>
+          <ThemeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        </div>
       </div>
 
       {/* XP Bar */}
       <div className="xp-bar-container">
+        <h3 className="section-title">Experience Points</h3>
         <XPbar currentXP={currentXP} maxXP={maxXP} />
       </div>
 

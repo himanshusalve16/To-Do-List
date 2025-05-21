@@ -1,8 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaPlus, FaTimes, FaStickyNote, FaArrowsAlt, FaGripLines } from 'react-icons/fa';
 
 const StickyNotes = () => {
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState(() => {
+    const savedNotes = localStorage.getItem('stickyNotes');
+    return savedNotes ? JSON.parse(savedNotes) : [];
+  });
   const [input, setInput] = useState('');
+  
+  // Container position state
+  const [containerPosition, setContainerPosition] = useState(() => {
+    const savedPosition = localStorage.getItem('stickyNotesContainerPosition');
+    // Default position at the bottom of the page
+    if (!savedPosition) {
+      // We'll set a default position at the bottom center of the viewport
+      const defaultX = typeof window !== 'undefined' ? 
+        Math.max(0, (window.innerWidth / 2) - 175) : 0; // 175 is half of container width
+      const defaultY = typeof window !== 'undefined' ? 
+        Math.max(0, window.innerHeight - 450) : 0; // Position from top to be near bottom
+      return { x: defaultX, y: defaultY };
+    }
+    return JSON.parse(savedPosition);
+  });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
+  
+  const containerRef = useRef(null);
+  
+  useEffect(() => {
+    localStorage.setItem('stickyNotes', JSON.stringify(notes));
+  }, [notes]);
+
+  useEffect(() => {
+    // Save position to localStorage whenever it changes
+    localStorage.setItem('stickyNotesContainerPosition', JSON.stringify(containerPosition));
+  }, [containerPosition]);
+  
+  // Check if we're on a mobile device
+  const isMobile = () => {
+    return window.innerWidth <= 768;
+  };
+  
+  // Position at bottom for mobile devices
+  useEffect(() => {
+    const handleResize = () => {
+      if (isMobile()) {
+        // For mobile, position at bottom
+        const defaultX = 0; // Left aligned
+        const defaultY = window.innerHeight - 300; // Near bottom of screen
+        setContainerPosition({ x: defaultX, y: defaultY });
+      }
+    };
+    
+    // Set initial position
+    handleResize();
+    
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const addNote = () => {
     if (input.trim()) {
@@ -17,103 +73,112 @@ const StickyNotes = () => {
     setNotes(newNotes);
   };
 
+  // Container drag handlers
+  const handleContainerMouseDown = (e) => {
+    // Only start dragging if clicking on the header
+    if (e.target.closest('.sticky-notes-drag-handle')) {
+      setIsDragging(true);
+      setDragStartPos({
+        x: e.clientX - containerPosition.x,
+        y: e.clientY - containerPosition.y
+      });
+    }
+  };
+
+  const handleContainerMouseMove = (e) => {
+    if (isDragging) {
+      // Calculate new position
+      const newX = e.clientX - dragStartPos.x;
+      const newY = e.clientY - dragStartPos.y;
+      
+      // Ensure the container stays within the viewport
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const containerWidth = containerRef.current?.offsetWidth || 300;
+      const containerHeight = containerRef.current?.offsetHeight || 400;
+      
+      // Limit the position to keep at least 100px of the container visible
+      const boundedX = Math.max(100 - containerWidth, Math.min(newX, viewportWidth - 100));
+      const boundedY = Math.max(0, Math.min(newY, viewportHeight - 100));
+      
+      setContainerPosition({ x: boundedX, y: boundedY });
+    }
+  };
+
+  const handleContainerMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Add event listeners for container drag
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleContainerMouseMove);
+      window.addEventListener('mouseup', handleContainerMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleContainerMouseMove);
+      window.removeEventListener('mouseup', handleContainerMouseUp);
+    };
+  }, [isDragging, dragStartPos]);
+
   return (
-    <div style={styles.container}>
-      <h3 style={styles.title}>📝 Sticky Notes</h3>
-      <div style={styles.inputContainer}>
+    <div 
+      className="sticky-notes-container"
+      style={{
+        position: 'absolute',
+        left: `${containerPosition.x}px`,
+        top: `${containerPosition.y}px`,
+        zIndex: isDragging ? 1000 : 100,
+        cursor: isDragging ? 'grabbing' : 'default'
+      }}
+      ref={containerRef}
+      onMouseDown={handleContainerMouseDown}
+    >
+      <div className="sticky-notes-header">
+        <div className="sticky-notes-drag-handle">
+          <FaGripLines /> 
+        </div>
+        <h3 className="sticky-notes-title"><FaStickyNote /> Sticky Notes</h3>
+        <p className="sticky-notes-subtitle">Drag header to move container</p>
+      </div>
+      <div className="sticky-notes-input-container">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-        
-          style={styles.input}
+          placeholder="Type a note..."
+          className="sticky-notes-input"
+          onKeyPress={(e) => e.key === 'Enter' && addNote()}
         />
-        <button onClick={addNote} style={styles.addButton}>Add</button>
+        <button onClick={addNote} className="sticky-notes-add-button">
+          <FaPlus />
+        </button>
       </div>
-      <div>
-        {notes.map((note, index) => (
-          <div key={index} style={styles.note}>
-            <span>{note}</span>
-            <button onClick={() => deleteNote(index)} style={styles.deleteButton}>✕</button>
-          </div>
-        ))}
+      <div className="sticky-notes-list">
+        {notes.length === 0 ? (
+          <div className="sticky-notes-empty">No notes yet. Add your first note!</div>
+        ) : (
+          notes.map((note, index) => (
+            <div 
+              key={index} 
+              className="sticky-note"
+            >
+              <p className="sticky-note-content">{note}</p>
+              <button 
+                onClick={() => deleteNote(index)} 
+                className="sticky-note-delete-button"
+                aria-label="Delete note"
+              >
+                <FaTimes />
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
 };
 
-const styles = {
-  container: {
-    position: 'fixed',
-    right: '20px',
-    top: '80px',
-    width: '280px',
-    padding: '20px',
-    backgroundColor: '#3a5a8c', // main blue background
-    border: '1px solid #274870', // darker blue border
-    borderRadius: '16px',
-    boxShadow: '0 6px 18px rgba(39, 72, 112, 0.7)',
-    zIndex: 1000,
-    color: '#f0f4ff', // light text color
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-  },
-  title: {
-    margin: 0,
-    marginBottom: '12px',
-    fontSize: '20px',
-    color: '#f0f4ff',
-  },
-  inputContainer: {
-    display: 'flex',
-    marginBottom: '15px',
-  },
-  input: {
-    flex: 1,
-    padding: '8px',
-    borderRadius: '8px 0 0 8px',
-    border: '1px solid #274870',
-    fontSize: '0.9rem',
-    color: '#f0f4ff',
-    backgroundColor: 'rgba(240, 244, 255, 0.15)',
-    outline: 'none',
-  },
-  addButton: {
-    padding: '8px 14px',
-    backgroundColor: '#274870',
-    border: 'none',
-    borderRadius: '0 8px 8px 0',
-    cursor: 'pointer',
-    color: 'white',
-    fontWeight: '600',
-    fontSize: '0.9rem',
-    transition: 'background-color 0.3s ease',
-  },
-  note: {
-    backgroundColor: '#274870', // darker blue for each note
-    borderRadius: '12px',
-    padding: '12px 16px',
-    marginBottom: '12px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    color: '#f0f4ff',
-    fontSize: '0.95rem',
-    wordWrap: 'break-word',
-    boxShadow: '0 4px 10px rgba(39, 72, 112, 0.7)',
-    transition: 'box-shadow 0.3s ease',
-  },
-  deleteButton: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    color: '#ff6b6b',
-    fontSize: '1.1rem',
-    transition: 'color 0.3s ease',
-  },
-};
-
-// Add hover effect for add and delete buttons using inline styles is tricky.
-// You might consider switching to CSS modules or styled-components for better control.
+// Removed inline styles in favor of CSS classes
 
 export default StickyNotes;

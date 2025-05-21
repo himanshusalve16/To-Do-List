@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FaMicrophone, FaStop } from 'react-icons/fa';
 
 const MicSearch = ({ onAddTask }) => {
   const [listening, setListening] = useState(false);
@@ -52,14 +53,30 @@ const MicSearch = ({ onAddTask }) => {
 
   return (
     <div className="mic-search-container">
+      <div className="mic-search-header">
+        <h3 className="mic-title">Voice Command</h3>
+        <p className="mic-subtitle">Add tasks using your voice</p>
+      </div>
       <button 
         onClick={toggleListening} 
         className={`mic-btn ${listening ? 'listening' : ''}`}
         aria-label={listening ? 'Stop listening' : 'Start listening'}
       >
-        {listening ? '🎙️ Listening...' : '🎤 Start voice task'}
+        {listening ? (
+          <>
+            <FaStop /> Stop Listening
+          </>
+        ) : (
+          <>
+            <FaMicrophone /> Add Task by Voice
+          </>
+        )}
       </button>
-      {transcript && <p className="transcript">You said: "{transcript}"</p>}
+      {transcript && (
+        <div className="transcript-container">
+          <p className="transcript">Added: "{transcript}"</p>
+        </div>
+      )}
     </div>
   );
 };

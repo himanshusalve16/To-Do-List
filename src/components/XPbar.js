@@ -8,6 +8,7 @@ const XPbar = ({ currentXP, maxXP }) => {
       <span className="xp-label-left">{currentXP} / {maxXP} XP</span>
       <div className="xp-bar-wrapper">
         <div className="xp-bar" style={{ width: `${percentage}%` }}></div>
+        <span className="xp-score">{`${Math.round(percentage)}%`}</span>
       </div>
     </div>
   );
