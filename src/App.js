@@ -10,7 +10,7 @@ import XPbar from './components/XPbar';
 
 function App() {
   const [todos, setTodos] = useLocalStorage('todos', []);
-  const [darkMode, setDarkMode] = useLocalStorage('darkMode', false);
+  const [darkMode, setDarkMode] = useLocalStorage('darkMode', true);
 
   useEffect(() => {
     if (darkMode) {
@@ -50,8 +50,9 @@ function App() {
 
   // Calculate XP
   const completedCount = todos.filter(todo => todo.completed).length;
+  const totalCount = todos.length || 1; // Prevent division by zero
   const currentXP = completedCount * 10;
-  const maxXP = 100;
+  const maxXP = Math.max(totalCount * 10, 100); // Dynamic max based on total todos
 
   return (
     <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
@@ -82,12 +83,14 @@ function App() {
         />
       </div>
       
+      {/* Sticky Notes Widget - positioned between todo list and footer */}
+      <div className="sticky-notes-section">
+        <StickyNotes />
+      </div>
+      
       <footer className="app-footer">
         <p>React To-Do List App © {new Date().getFullYear()}</p>
       </footer>
-
-      {/* Floating Sticky Notes Widget */}
-      <StickyNotes />
     </div>
   );
 }

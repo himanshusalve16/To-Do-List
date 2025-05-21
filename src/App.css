@@ -369,6 +369,31 @@ body::before {
   width: 100%;
 }
 
+.xp-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.xp-label-right {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.xp-bar {
+  height: 100%;
+  background: #FF6B00;
+  border-radius: 15px;
+  transition: width 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+  min-width: 30px;
+}
+
 .description-container {
   margin-top: 16px;
   position: relative;
@@ -744,12 +769,17 @@ body::before {
 
 /* App Footer */
 .app-footer {
-  margin-top: 40px;
+  margin-top: auto;
   padding: 20px 0;
-  position: relative;
   text-align: center;
-  color: var(--secondary-color);
+  color: var(--primary-color);
   font-size: 0.9rem;
+  font-weight: 500;
+  background-color: var(--card-bg);
+  border-radius: var(--card-radius);
+  margin-bottom: 20px;
+  padding: 15px;
+  box-shadow: var(--shadow-sm);
 }
 
 .app-footer::before {
@@ -1260,7 +1290,7 @@ body::before {
   font-size: 16px;
   font-weight: 600;
   color: #ffffff;
-  background: var(--tertiary-color);
+  background: var(--primary-color);
   padding: 6px 14px;
   border-radius: 16px;
   box-shadow: none;
@@ -1296,6 +1326,7 @@ body::before {
   position: relative;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
+  border: 1px solid var(--border-color);
 }
 
 .xp-score {
@@ -1303,17 +1334,34 @@ body::before {
   font-size: 0.9rem;
   font-weight: 600;
   color: white;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 2px 8px;
+  background-color: var(--primary-color);
+  padding: 3px 10px;
   border-radius: 10px;
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.xp-score-inner {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  z-index: 4;
 }
 
 .dark-mode .xp-score {
   color: white;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .xp-bar-wrapper::after {
@@ -1417,9 +1465,36 @@ body.dark-mode .xp-label-left {
     z-index: 1000;
   }
   
-  /* Add padding to app-container to create space for sticky notes */
+  /* Add padding to app-container for better spacing */
   .app-container {
-    padding-bottom: 40vh;
+    padding-bottom: 20px;
+  }
+  
+  .app-footer {
+    position: relative;
+    margin-top: 20px;
+    width: 100%;
+    border-radius: var(--card-radius);
+    padding: 10px;
+    font-size: 0.8rem;
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  /* Sticky notes section styling */
+  .sticky-notes-section {
+    margin: 30px 0;
+  }
+  
+  /* Position sticky notes as a regular component */
+  .sticky-notes-container {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    margin: 0 auto;
+    border-radius: var(--card-radius);
   }
   
   .sticky-notes-list {
@@ -1442,13 +1517,45 @@ body.dark-mode .xp-label-left {
   
   .xp-bar-row {
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
     margin: 15px auto;
+    width: 100%;
   }
   
+  .xp-bar-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background-color: var(--card-bg);
+    padding: 15px;
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 10px;
+  }
+  
+  /* Hide the progress bar on mobile */
   .xp-bar-wrapper {
-    height: 25px;
-    margin-bottom: 20px;
+    display: none;
+  }
+  
+  .xp-bar {
+    min-width: 30px;
+    display: block;
+    height: 100%;
+    background: #FF6B00;
+    box-shadow: 0 0 10px rgba(255, 107, 0, 0.7);
+    animation: pulse-xp 1.5s infinite alternate;
+  }
+  
+  @keyframes pulse-xp {
+    0% {
+      box-shadow: 0 0 5px rgba(255, 107, 0, 0.7);
+    }
+    100% {
+      box-shadow: 0 0 15px rgba(255, 107, 0, 0.9);
+    }
   }
   
   .xp-label-left {

@@ -75,8 +75,8 @@ const StickyNotes = () => {
 
   // Container drag handlers
   const handleContainerMouseDown = (e) => {
-    // Only start dragging if clicking on the header
-    if (e.target.closest('.sticky-notes-drag-handle')) {
+    // Only start dragging if clicking on the header and not on mobile
+    if (e.target.closest('.sticky-notes-drag-handle') && !isMobile()) {
       setIsDragging(true);
       setDragStartPos({
         x: e.clientX - containerPosition.x,
